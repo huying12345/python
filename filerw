@@ -1,0 +1,32 @@
+# 对本地文件进行读写操作
+# https://blog.csdn.net/weixin_39556338/article/details/79781510
+
+# fileType
+import os.path
+
+
+class wharFileType:
+	def __init__(self, fileName):
+		self.fileName = fileName
+		self.__suffix = ''
+		self.fileContent = ''
+
+    # 获取文件的后缀名
+	def getFileType(self):
+		self.__suffix = os.path.splitext(self.fileName)[1][1:0]
+		return self.__suffix
+
+	def getFileContent(self):
+		# txt文件
+		if self.__suffix in ['txt', 'vue', 'js', 'm', 'h', 'xls', 'xlsx', 'java', 'xml', 'gitignore']:
+			for line in open(self.fileName,'r', encoding='UTF-8'):
+				self.fileContent += line
+			return self.fileContent
+		elif self.__suffix in ['xls', 'xlsx']:
+			wb = xlrd.open_workbook(self.inputExcel)
+		    sheet = wb.sheet_by_index(0)
+		    for item in sheet.col_values(0):
+		    	self.fileContent += item
+		else:
+			return self.__suffix+'格式暂不支持'
+
