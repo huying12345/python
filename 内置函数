@@ -1,0 +1,258 @@
+python的内置函数（更新中）
+参考链接：https://docs.python.org/zh-cn/3.7/library/functions.html#abs
+
+1、abs(x)
+	返回一个数的绝对值。实参可以是整数或浮点数。如果实参是一个复数，返回它的模
+	abs(-10)  => 10
+
+2、all(iterable)
+	如果 iterable 的所有元素为真（或迭代器为空），返回 True
+	实现原理如下：
+	def all(iterable):
+	    for element in iterable:
+	        if not element:
+	            return False
+	    return True
+
+    arr = () => all(arr) => True
+    arr = [] => all(arr) => True
+    arr = {} => all(arr) => True
+    arr=(1,2,3,5) => all(arr) => True
+    arr=[1,2,4,0] => all(arr) => False
+
+3、any(iterable)
+	如果 iterable 的任一元素为真则返回 True。 如果迭代器为空，返回 False
+	实现原理如下：
+	def any(iterable):
+		for element in iterable:
+			if element:
+				return True
+		return False
+	arr = () => any(arr) => False
+    arr = [] => any(arr) => False
+    arr = {} => any(arr) => False
+    arr=(1,2,3,5) => any(arr) => True
+    arr=[1,2,4,0] => any(arr) => True
+	
+4、ascii(Object)
+	就像函数 repr()，返回一个对象可打印的字符串，但是 repr() 返回的字符串中非 ASCII 编码的字符，会使用 \x、\u 和 \U 来转义。生成的字符串和 Python 2 的 repr() 返回的结果相似。
+
+5、bin(x)
+	将一个整数转变为一个前缀为'0b'的二进制字符串。结果是一个合法的 Python 表达式。如果 x 不是 Python 的 int 对象，那它需要定义 __index__() 方法返回一个整数
+
+	bin(3) => '0b11'
+	bin(-10) => '-0b1010'
+
+	如果需要或不需要前缀'0b': 1）format(14, '#b') => '0b1110'  format(14, 'b') => '1110'
+							2）f'{14:#b}' => '0b1110'        f'{14:b}' => '1110'
+6、bool([x])
+	如果 x 是假的或者被省略，返回 False；其他情况返回 True,bool是int类的子类,其他类不能继承自它,它只有 False 和 True 两个实例。
+
+7、breakpoint(*args, **kw)
+	此函数会在调用时将你陷入调试器中，它调用 sys.breakpointhook() ，直接传递 args 和 kws， 可以设置为其他一些函数并被 breakpoint() 自动调用，以允许进入你想用的调试器
+	
+8、bytearray([source[, encoding,[errors]]])
+	返回一个新的bytes数组，bytearray是一个可变序列，包含范围0<=x<256的整数；它有可变序列的大部分方法也有bytes类型的大部分方法。
+
+9、bytes([source[, encoding[, errors]]])
+	返回一个新的bytes对象， 是一个不可变序列，包含范围为 0 <= x < 256 的整数。bytes 是 bytearray 的不可变版本 - 它有其中不改变序列的方法和相同的索引、切片操作。
+
+10、callable(object)
+	实参 object 是可调用的，返回 True，否则返回 False。
+	如果返回真，调用仍可能会失败；但如果返回假，则调用 object 肯定会失败；注意类是可调用的，如果实例的类有 __call__() 方法，则它是可调用的。
+
+11、chr(i)
+	返回 Unicode 码位为整数 i 的字符的字符串格式
+	chr(97) => 'a'
+	chr(8364) => '€'
+	chr() 是ord()的逆函数
+
+12、ord()
+
+13、@classmethod
+	把一个方法封装成类方法
+	一个类方法把类自己作为第一个实参，就像一个实例方法把实例自己作为第一个实参
+	class C:
+		@classmethod
+		def f(cls, arg1, arg2,...):.....
+	@classmethod 这样的形式称为函数的 decorator
+
+14、compile(source, filename,mode,flag=0,dont_inherit=False,optimize=-1)
+	将 source 编译成代码或 AST 对象,代码对象可以被 exec() 或 eval() 执行
+	1) source 可以是常规的字符串、字节字符串，或者 AST 对象
+	   如何使用AST对象，参考文档：https://docs.python.org/zh-cn/3.7/library/ast.html#module-ast
+	2) filename 实参需要是代码读取的文件名；如果代码不需要从文件中读取，可以传入一些可辨识的值（经常会使用 '<string>'）
+	3) mode 实参指定了编译代码必须用的模式: 如果 source 是语句序列，可以是 'exec';如果是单一表达式，可以是 'eval';如果是单个交互式语句，可以是'single'。（在最后一种情况下，如果表达式执行结果不是 None 将会被打印出来。）
+	4) 可选参数 flags 和 dont_inherit 控制在编译 source 时要用到哪个 future 语句; 如果两者都未提供（或都为零）则会使用调用 compile() 的代码中有效的 future 语句来编译代码; 如果给出了 flags 参数但没有 dont_inherit (或是为零) 则 flags 参数所指定的 以及那些无论如何都有效的 future 语句会被使用;  如果 dont_inherit 为一个非零整数，则只使用 flags 参数 -- 在调用外围有效的 future 语句将被忽略
+	5) 如果编译的源码不合法，此函数会触发 SyntaxError 异常；如果源码包含 null 字节，则会触发 ValueError 异常。
+
+15、complex(real[, imag])
+	返回值为real+imag * 1j的复数，或将字符串或数字转换为复数。如果第一个形参是字符串，则它被解释为一个复数，并且函数调用时必须没有第二个形参。第二个形参不能是字符串。每个实参都可以是任意的数值类型（包括复数）。如果省略了 imag，则默认值为零，构造函数会像 int 和 float 一样进行数值转换。如果两个实参都省略，则返回 0j。当从字符串转换时，字符串在 + 或 - 的周围必须不能有空格。
+
+16、delattr(object, name)
+	字符串必须是对象的某个属性。如果对象允许，该函数将删除指定的属性。例如 delattr(x, 'foobar') 等价于 del x.foobar
+
+17、dict(**kw)
+   dict(mapping, **kw)
+   dict(iterable, **kw)
+
+   创建一个新的字典，dict对象是一个字典类
+   以下都是表示：{"one": 1, "two": 2, "three": 3}
+	>>> a = dict(one=1, two=2, three=3)
+	>>> b = {'one': 1, 'two': 2, 'three': 3}
+	>>> c = dict(zip(['one', 'two', 'three'], [1, 2, 3]))
+	>>> d = dict([('two', 2), ('one', 1), ('three', 3)])
+	>>> e = dict({'three': 3, 'one': 1, 'two': 2})
+	>>> a == b == c == d == e
+	True
+
+18、dir([object])
+	如果没有实参，则返回当前本地作用域中的名称列表。如果有实参，它会尝试返回该对象的有效属性列表。
+	如果对象有一个名为 __dir__() 的方法，那么该方法将被调用，并且必须返回一个属性列表；
+	如果对象不提供 __dir__()，这个函数会尝试从对象已定义的 __dict__ 属性和类型对象收集信息
+	class Shape:
+		def __dir__(self):
+			return ['area', 'location', 'perimeter']
+	>> s = Shape()
+	>> dir(s)  
+	['area', 'location', 'perimeter']
+
+19、divmode(a, b)
+	它将两个（非复数）数字作为实参，并在执行整数除法时返回一对商和余数。
+	对于混合操作数类型，适用双目算术运算符的规则。
+	对于整数，结果和 (a // b, a % b) 一致
+	对于浮点数，结果是 (q, a % b)  q 通常是 math.floor(a / b) 但可能会比 1 小
+	q * b + a % b 和 a 基本相等
+	如果 a % b 非零，它的符号和 b 一样，并且 0 <= abs(a % b) < abs(b)
+
+20、enumerate(iterable, start=0)
+	返回一个枚举对象。iterable 必须是一个序列，或 iterator，或其他支持迭代的对象
+	enumerate() 返回的迭代器的 __next__() 方法返回一个元组，里面包含一个计数值（从 start 开始，默认为 0）和通过迭代 iterable 获得的值。
+	>> seasons = ['Spring','Summer','Fall','Winter']
+	>> list(enumerate(seasons))
+	[(0, 'Spring'), (1, 'Summer'), (2, 'Fall'), (3, 'Winter')]
+
+	>> enumList = enumerate(seasons)
+	>> enumList.__next__()
+	(0, 'Spring')
+	>> enumList.__next__()
+	(1, 'Summer')
+	....
+
+21、eval(expression, global=None, locals=None)
+	实参是一个字符串，以及可选的 globals 和 locals。globals 实参必须是一个字典。locals 可以是任何映射对象。
+	expression 参数会作为一个 Python 表达式（从技术上说是一个条件列表）被解析并求值
+	使用 globals 和 locals 字典作为全局和局部命名空间
+	>> x=1
+	>> eval('x+1')
+	2
+
+22、exec(object[,global[,locals]])
+	这个函数支持动态执行 Python 代码。object 必须是字符串或者代码对象。
+	>> exec('print(1)')
+	1
+	>> exec('print(6/2)')
+	3.0
+
+23、filter(function,iterable)
+	用 iterable 中函数 function 返回真的那些元素，构建一个新的迭代器。
+	1）当function不为None时，item for item in interable if function(item)
+	2）当function为None时，item for item in interable if item
+
+24、float([x])
+	返回从数字或字符串x生成的浮点数
+	如果实参是字符串，则它必须是包含十进制数字的字符串，字符串前面可以有符号，之前也可以有空格
+	>> float(' 0.4 ')
+	0.4
+
+	可选的符号有 '+' 和 '-' ； '+' 对创建的值没有影响
+	>> float('-0.4')
+	0.4
+	>> float(' +0.5 ')
+	0.5
+
+	实参也可以是 NaN（非数字）、正负无穷大的字符串。确切地说，除去首尾的空格后，输入必须遵循以下语法：
+	sign           ::=  "+" | "-"
+	infinity       ::=  "Infinity" | "inf"
+	nan            ::=  "nan"
+	numeric_value  ::=  floatnumber | infinity | nan
+	numeric_string ::=  [sign] numeric_value
+
+	>> float('+23')        23.0
+	>> float('-8.9')       -8.9
+	>> float('inf')        inf
+	>> float('-inf')       -inf
+	>> float('nan')        nan
+	>> float('-nan')       nan
+ 	>> float('-1E6')       -1000000.0
+ 	>> float('1e-003')     0.001
+ 	>> float('  -12345\n') -12345.0
+	>> float()             0.0
+
+	字母大小写都可以，例如，'inf'、'Inf'、'INFINITY'、'iNfINity' 都可以表示正无穷大
+	实参在python浮点精度范围外，则会触发 OverflowError
+
+25、format(value[, format_spec])
+	将 value 转换为 format_spec 控制的“格式化”表示。
+	format_spec 的解释取决于 value 实参的类型，内置类型使用标准格式化语法
+	默认的 format_spec 是一个空字符串，它通常和调用 str(value) 的结果相同。
+	1）格式转换
+	2）按位置访问参数
+	3）按名称访问参数
+	4）访问参数的属性
+	5）访问参数的项
+	……
+	具体使用可参考教程：
+	https://docs.python.org/zh-cn/3.7/library/string.html#formatspec
+
+26、frozenset([iterable])
+	返回新的iterable对象，具体可参考：https://docs.python.org/zh-cn/3.7/library/stdtypes.html#frozenset
+
+27、getattr(object,name[, default])
+	返回对象命名属性的值。 name必须是字符串，如果该字符串是对象的属性之一，则返回该属性的值。
+	getattr(x, 'foobar') 等同于 x.foobar。如果指定的属性不存在，且提供了 default 值，则返回它，否则触发 AttributeError
+
+	>> getattr(abs, '__name__')
+	abs
+	>> getattr(abs, '__next__')
+	AttributeError: 'builtin_function_or_method' object has no attribute '__next__'
+
+28、globals()
+	返回表示当前全局符号表的字典。
+
+29、hasattr(object, name)
+	该实参是一个对象和一个字符串。
+	判断object对象中是否存在name属性，存在则返回True，反之False。
+	此功能是通过调用 getattr(object, name) 看是否有 AttributeError 异常来实现的。
+
+30、hash(object)
+	
+31、help([object])
+
+32、hex(x)
+	将整数转换为以'0x'为前缀的小写十六进制字符串
+	>> hex(255)
+	'0xff'
+	>> hex(-42)
+	'-0x2a'
+
+33、id(object)
+	返回对象的标识值，该值是一个整数，在此对象的生命周期中保证是唯一且恒定的，两个生命期不重叠的对象可能具有相同的 id() 值
+
+34、input([prompt])
+	如果存在 prompt 实参，则将其写入标准输出，末尾不带换行符
+	>> s = input('--->')
+	---> Monty Python's Flying Circus
+	>> s
+	"Monty Python's Flying Circus"
+
+35、int(x, base=10)
+
+36、isinstance(object, classinfo)
+
+27、issubclass(class, classinfo)
+	如果 class 是 classinfo 的子类（直接、间接或 虚拟 的），则返回 true。classinfo 可以是类对象的元组，此时 classinfo 中的每个元素都会被检查。其他情况，会触发 TypeError 异常。
+
+28、
+
+
