@@ -1,0 +1,600 @@
+
+一、python数据类型：
+	1、字符串(str)
+	2、数字（int）
+	3、浮点（float）
+	4、列表（list）
+	5、元祖（tuple）
+	6、字典（dict） key值唯一，类似list可变的不能作为key
+	7、集合（set）
+
+二、数据类型判断
+	1、isinstance(变量,类型)：
+	  1）isinstance(xxx, int)
+	  2）isinstance(xxx, (str,int,float……))：只要xxx的类型匹配后面的任意一个都返回true
+
+	2、type(常量)：
+	  type(xxx)
+	  type(xxx) == type('123') 通过与已知类型的常量进行比较
+
+	补充:　
+	isinstance() 与 type() 区别：
+	type() 不会认为子类是一种父类类型，不考虑继承关系。
+	isinstance() 会认为子类是一种父类类型，考虑继承关系。
+	如果要判断两个类型是否相同推荐使用 isinstance()。
+
+三、基础知识巩固
+	1、print
+    	打印特殊字符时需小心，可以使用转移字符\，也可以使用原始字符串在引号前面添加一个'r'
+    	eg:
+		 >>>print('C:\User\name')  # C:\User   name    \n或变成换行符
+		 >>>print('C:\\User\\name')  # C:\User\name   使用转移字符\
+		 >>>print(r'C:\User\name')  # C:\User\name  引号前面添加一个'r'
+ 	
+ 	2、字符串
+ 		1）字符串字面值（引号引起来的字符）可以跨行连续输入：
+			三重引号，双引号单引号都可以；字符串中的回车会自动包含到字符串中，如果不想包含，就加一个'\'；
+ 			>>>print("""\
+			>>>Usage: thingy [OPTIONS]
+		   	....    -h                        
+		   	....    -H hostname               
+			....    """)
+			Usage: thingy [OPTIONs]  # 最开始的换行没有包含进来，如果不加\，你会看到输出的结果第一行存在一个空行
+		    -h
+		    -H hostname
+
+	    2）字符串连接：
+	    	+或者*
+	    	+号可以连接字符串，进行拼接
+	    	*号可以重复字符串
+	    	eg:
+    		 >>>3 * 'un' + 'ium'  # unununium
+    		 重复三次un并且拼接上ium
+
+    		 相邻的两个或多个字符串字面值将会自动拼接在一起:
+    		 eg:
+    		 	>>>'hello' 'Py''thon'  # 'helloPython'
+		 	相邻之间的空格不会影响拼接，单引号双引号都不会影响字符串之间的拼接
+
+		 	这个在需要把长字符串拆开分别输入的时候尤其有用！！！
+
+		 	以上都是针对字符串字面值，变量和表达式不行！！！变量的连接可以使用+号
+
+		3）字符串的索引
+			字符串具有索引，可以通过下标进行获取单个字符串：
+			eg:
+			 >>>word='Python'
+			 >>>word[0]  # 'P'
+
+			 从左往右是从0开始，从右往左是从-1开始：
+			 eg:
+			  >>>word[-1]  # 'n'
+			  >>>world[-5]  # 'y'
+		 	如果输入的索引值超出了字符长度，会报错：IndexError: string index out of range
+		 	eg: 
+		 	 >>>world[7]
+
+		 	切片的时候超出范围的值会被自动处理：
+		 	eg:
+		 	 >>>world[0:42]  # 'Python'
+		 	 >>>world[42:]   # ''
+  	  	4）不可替换
+  	  		字符串中的每个字符都不能替换，因为它们是immutable（永恒不变）的，如果需要不同的字符串，直接新建即可。
+  		
+  		5）格式化
+  			>>>name = "Fred"
+  			>>>f"He said his name is {name!r}."  #  He said his name is 'Fred'.
+  			>>>f"He said his name is {repr(name)}"  # He said his name is 'Fred'.  repr()方法等于!r
+
+  			format()方法
+  				str.format()使用规则如下:
+
+  				>>>print('{0} and {1}'.format('spam', 'eggs'))  # spam and eggs
+  				>>>print('{1} and {0}'.format('spam', 'eggs'))  # eggs and spam
+  				花括号及值会被format传的值替换，花括号的数字代表了format传的参数的索引
+
+	3、for循环
+    	如果需要在循环内部修改序列中的值，先copy一份副本，如下：
+    	eg:
+    	 >>>for w in words[:]:  # Loop over a slice copy of the entire list.
+		 ...     if len(w) > 6:
+		 ...         words.insert(0, w)
+		 ...
+		 >>> words   # ['defenestrate', 'cat', 'window', 'defenestrate']
+
+		 如果for循环写成for w in words:，这个示例就会创建无限长的列表，一次又一次重复的插入'defenestrate'。
+
+ 	4、数据结构
+ 		1）列表
+ 			1. 栈使用：
+	 			后进先出的原则，添加一个元素到堆栈的顶端，使用append()，从堆栈的顶部取出一个元素，
+	 			使用pop()，不用指定索引。
+	 			eg:
+	 				>>> stack = [3, 4, 5]
+					>>> stack.append(6)
+					>>> stack.append(7)
+					>>> stack
+					[3, 4, 5, 6, 7]
+					>>> stack.pop()
+					7
+					>>> stack
+					[3, 4, 5, 6]
+
+ 			2. 队列使用：
+	 			先进先出的原则，但是列表用作这个目的相当低效，在列表最后添加元素非常快，但是在列表开头插入元素或者弹出元素会很慢（因为所有的其他元素都必须移动一位）。
+	 			若要实现一个队列， collections.deque 被设计用于快速地从两端操作
+	 			eg:
+					>>> from collections import deque
+					>>> queue = deque(["Eric", "John", "Michael"])
+					>>> queue.append("Terry")           # Terry arrives
+					>>> queue.append("Graham")          # Graham arrives
+					>>> queue.popleft()                 # The first to arrive now leaves
+					'Eric'
+					>>> queue.popleft()                 # The second to arrive now leaves
+					'John'
+					>>> queue                           # Remaining queue in order of arrival
+					deque(['Michael', 'Terry', 'Graham'])
+
+			3. 嵌套的列表推导式
+				matrix = [
+				    [1, 2, 3, 4],
+				    [5, 6, 7, 8],
+				    [9, 10, 11, 12],
+				]
+			类似这种3x4的矩阵，想要交换其行和列：
+			>>>[row[i] for row in matrix] for i in range(4)
+			# [[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]
+
+			但是在实际应用中更倾向于使用内置函数来解决类似的流程：如上的流程可以用内置函数zip()代替：
+			>>>list(zip(*matrix))
+			# [(1, 5, 9), (2, 6, 10), (3, 7, 11), (4, 8, 12)]
+
+
+四、函数
+	1、定义关键字：def
+		很多内部自定义的函数可以直接使用，参考地址：https://docs.python.org/3/library/functions.html#abs
+		eg:
+		def my_abs(x):
+		    if not isinstance(x, (int, float)): # 如果参数x的类型!=int或者!=float
+		        raise TypeError('自定义报错提示语')
+	        if x>= 0:
+	            return x
+	        else:
+	        	return -x
+	
+	2、函数的引用
+   	 	1）比如：你是在.py结尾的文本中写了函数，需要在python解释器中使用，可以使用如下语句进行调用
+   	 		-> from 文件名（不含.py) import 函数名      	
+   	 	2）直接在解释器中定义的函数，可直接引用
+   	 
+	 	3）空函数：pass语句
+		 	eg:  def nop():
+		 		     pass   # 作用在于先定义，后补充内容，如果不加pass，会报语法错误
+
+     	4)返回多个值
+		    import math  # 导入math包，并允许后续代码引用math包里的sin、cos等函数
+		    def move(x,y,step,angle):
+		       nx = x+step*math.cos(angle)
+		       ny = y-step*math.sin(angle)
+	       	   return nx, ny
+	    	但其实这只是一种假象，Python函数返回的仍然是单一值：
+	    	返回值是一个tuple！但是，在语法上，返回一个tuple可以省略括号，而多个变量可以同时接收一个tuple，按位置赋给对应的值，所以，Python的函数返回多值其实就是返回一个tuple，但写起来更方便
+		
+	  	5) return
+		   函数执行完毕也没有return语句时，自动return None
+
+      	6)代码注释
+	      eg:
+			# def quadratic(a,b,c):
+			# 	x = (-b + math.sqrt(b*b-4*a*c))/(2*a)
+			# 	y = (-b - math.sqrt(b*b-4*a*c))/(2*a)
+			# 	return x, y
+
+      	7)参数
+	       调用函数时，传入的值按照位置顺序依次赋给参数
+	       例① def power(x, n):   power(5)      # 报错  TypeError: power2() missing 1 required positional argument: 'n'
+	       例② def power(x, n=2): power(5)    # 25
+
+	       以上两个例子介绍了，函数默认参数的作用: 降低函数调用的难度	
+
+	       !!!默认参数只能放在必选参数之后，否则会报错：# SyntaxError: non-default argument follows default argument
+
+	       !!!定义默认参数要牢记一点：默认参数必须指向不变对象！ 具体原因请看第8)知识点
+
+      	8)默认参数最大的坑
+		    eg:
+		    def add_end(L=[]):
+		    	L.append('END')
+		    	return L
+
+			当你正常调用时，结果似乎不错：
+			>>> add_end([1, 2, 3])
+			[1, 2, 3, 'END']
+			>>> add_end(['x', 'y', 'z'])
+			['x', 'y', 'z', 'END']
+
+			当你使用默认参数调用时，一开始结果也是对的：
+
+			>>> add_end()
+			['END']
+
+			但是，再次调用add_end()时，结果就不对了：
+
+			>>> add_end()
+			['END', 'END']
+			>>> add_end()
+			['END', 'END', 'END']
+
+			很多初学者很疑惑，默认参数是[]，但是函数似乎每次都“记住了”上次添加了'END'后的list。
+
+			原因解释如下：
+
+			Python函数在定义的时候，默认参数L的值就被计算出来了，即[]，因为默认参数L也是一个变量，它指向对象[]，每次调用该函数，如果改变了L的内容，则下次调用时，默认参数的内容就变了，不再是函数定义时的[]了。
+			
+			定义默认参数要牢记一点：默认参数必须指向不变对象！
+
+			要修改上面的例子，我们可以用None这个不变对象来实现：
+
+			def add_end(L=None):
+			    if L is None:
+			       L = []
+			    L.append('END')
+			    return L
+
+		    无论调用多少次，都不会有问题
+
+			!!!为什么要设计str、None这样的不变对象呢？因为不变对象一旦创建，对象内部的数据就不能修改，这样就减少了由于修改数据导致的错误。此外，由于对象不变，多任务环境下同时读取对象不需要加锁，同时读一点问题都没有。我们在编写程序时，如果可以设计一个不变对象，那就尽量设计成不变对象。
+
+		9）可变参数
+		   关键字： *
+		   eg:
+			1)  def calc(numbers):
+					sum = 0
+					for n in numbers:
+						sum = sum + n * n
+					return sum
+
+			2)	def calc2(*numbers):
+					sum = 0
+					for n in numbers:
+						sum  = sum + n * n
+					return sum
+
+			calc函数调用的时候，传参需要封装成一个list或者tuple，比如：calc([1,2,3,4,5....])或者calc((1,2,3,4....))
+
+			calc2函数调用的时候，传参可以是任意个参数甚至0个参数，比如calc2(1,2,3.....)或者calc2()
+
+			定义可变参数和定义一个list或tuple参数相比，仅仅在参数前面加了一个*号。在函数内部，参数numbers接收到的是一个tuple，因此，函数代码完全不变。但是，调用该函数时，可以传入任意个参数，包括0个参数：
+
+			如果已经存在一个nums = [1, 2, 3]这样的list或者nums = (1, 2, 3)这样的tuple，要调用可变参数怎么办呢？
+
+		 	<1> 如果用calc函数： calc(nums[0], nums[1], nums[2])
+		 	<2> 如果用calc2函数： calc2(*nums)
+
+		 	通过以上两种方式，可以直接明了的看出<2>种方式的可操作性更高，更简单
+
+	 	10）关键字参数
+		 	 关键字： **   
+		 	 作用： 它可以扩展函数的功能
+		 	 eg:
+		 	 	1. def person(name, age, **extra):
+		 	 	    print('name:', name, 'age:', age, 'other:', extra)
+
+		 	    person('胡英', 24, city='上海', gender='女', family=4) 
+
+		 	    # name: 胡英 age: 24 other: {'city': '上海', 'gender': '女', 'family': 4}
+
+	 	    	**extra表示把extra这个dict的所有key-value用关键字参数传入到函数的**kw参数，kw将获得一个dict，注意kw获得的dict是extra的一份拷贝，对kw的改动不会影响到函数外的extra。
+
+	 	    	2. def person(name, age, **extra):
+	 	    	       if 'city' in extra:
+	 	    	       # 有city参数
+	 	    	           pass
+	 	    	       if 'job' in extra:
+	 	    	       # job参数
+	 	    	           pass   
+	 	 	           print('name:', name, 'age:', age, 'other:', extra)
+
+        11）命名关键字参数
+        	特殊分隔符： *
+
+        	eg:  如果要限制关键字参数的名字，就可以用命名关键字参数，例如，只接收city和job作为关键字参数
+	        	def person(name, age, *, city, job):
+	    		    print(name, age, city, job)   
+
+		    调用方式如下：
+				person('Candy', 18,city =  '成都',job =  'IT')
+
+			和关键字参数**extra不同，命名关键字参数需要一个特殊分隔符*，*后面的参数被视为命名关键字参数。
+
+			如果函数定义的参数中已经存在了可变参数，后面跟着的关键字参数可不用再加上分隔符*
+			eg:
+
+			  def person(name, age, *args, city, job):
+			      print(name, age, args, city, job)
+
+			关键字参数也可以有缺省值，简化调用： eg.
+
+			def person(name, age, *args, city = '上海', job):
+			      print(name, age, args, city, job)
+
+	       city存在默认值，可不传
+
+	    12）参数组合
+			在Python中定义函数，可以用必选参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、命名关键字参数和关键字参数。
+			虽然可以组合多达5种参数，但不要同时使用太多的组合，否则函数接口的可理解性很差。   
+
+			对于任意函数，都可以通过类似func(*args, **kw)的形式调用它，无论它的参数是如何定义的。
+	
+	3、递归函数
+		定义：一个函数在内部调用自身本身，这个函数就是递归函数
+		eg.  来计算阶乘 n! = 1 x 2 x 3 x ... x n，用函数fact(n)表示
+			 def fact(n):
+			     if n == 1:
+			         return 1
+		         return n * fact(n-1)
+		
+     	尾递归：
+     		尾递归调用时，过深的调用会导致栈溢出；解决递归调用栈溢出的方法是通过尾递归优化。
+
+     		尾递归是指，在函数返回的时候，调用自身本身，并且，return语句不能包含表达式。这样，编译器或者解释器就可以把尾递归做优化，使递归本身无论调用多少次，都只占用一个栈帧，不会出现栈溢出的情况。
+
+     		eg.
+	     		def fact(n):
+				    return fact_iter(n, 1)
+
+				def fact_iter(num, product):
+				    if num == 1:
+				        return product
+				    return fact_iter(num - 1, num * product)
+  			
+五、高级特性
+	在Python中，代码是越少越好、越简单越好。
+	基于这一思想，我们来介绍Python中非常有用的高级特性，1行代码能实现的功能，决不写5行代码。请始终牢记，代码越少，开发效率越高。
+
+	1、切片（slice）
+		已知一个list或者tuple，要截取指定范围的值，常规操作是利用循环，但是这种比较繁琐，而利用切片就可以轻松实现。
+	
+		倒数第一个元素的索引是-1
+
+		eg.
+
+		   L = list(range(100))   # L是一个从0-99的list
+
+		   1) L[:10]   # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 截取L的前10个元素
+		   2) L[-10:]  # [90, 91, 92, 93, 94, 95, 96, 97, 98, 99] 截取L的后10个元素
+		   3) L[:10:2] # [0, 2, 4, 6, 8] L的前10个数，每2个取一次
+		   4) L[::5]   # [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95] L所有的数，每5个取一次
+
+	    字符串str和元组tuple也可以利用切片（slice）来截取，且不会改变数据的类型：
+	    eg. 
+
+	      Str = 'helloworld'
+	      Str[:5] #'hello'
+	      Str[:5:2] #'hlo
+	      Str[-7:] #'loworld'
+	      ……
+
+	      Tup = (2,3,4,5,6)
+	      Tup[:3]  #(2, 3, 4)
+	      Tup[:8:3] #(2, 5)
+	      Tup:[-10:] #(2, 3, 4, 5, 6)
+
+  	2、迭代
+  		通过for循环来遍历这个list或tuple，这种遍历我们称为迭代（Iteration）
+  		要是可迭代对象，无论有无下标，都可以迭代，不必太关心该对象究竟是list还是其他数据类型。
+
+  		1）判断一个对象是否可迭代，方法：Iterable
+  		   eg.  from collections import Iterable
+  		   		isinstance('abc', Iterable)
+
+	3、列表生成式
+		eg.
+		   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  =》 list(range(1, 11))
+		   
+		   [1x1, 2x2, 3x3, ..., 10x10]怎么办？  =》 [x * x for x in range(1,11)]
+
+		   ['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ']  =》 [a + b for a in 'ABC' for b in "XYZ"]
+
+		   ['x=A', 'y=B', 'z=C'] =》 [k + '=' + v for k,v in {'x': 'A', 'y': 'B', 'z': 'C'}.items()]
+
+		   ['hello', 'world', 'ibm', 'apple'] =》 [s.lower() for s in ['Hello', 'World', 'IBM', 'Apple']]
+
+		   作业： L1 = ['Hello', 'World', 18, 'Apple', None]  => L2 = ['hello', 'world', 'apple']
+	   		     L2 = [x for x in L1 if isinstance(x,str)] 
+
+	4、生成器（generator）
+		创建方式：
+		1）把一个列表生成式的[]改成()
+			g = (x*x for x in range(10))  #<generator object <genexpr> at 0x000001BB14621570>
+
+			怎么打印出generator的每一个元素呢?  可以通过next()函数获得generator的下一个返回值
+
+			next(g) #0
+			next(g) #1
+			......
+
+			但是next调用不太方便，一般使用for循环，因为generator也是一个迭代对象。
+
+			所以，我们创建了一个generator后，基本上永远不会调用next()，而是通过for循环来迭代它，并且不需要关心StopIteration的错误
+				
+		2）yiled关键字：Generator生成器类似标准函数，但当它们要返回数据时会使用 yield 语句
+			eg.
+				def fib(max):
+				    n, a, b = 0, 0, 1
+				    while n < max:
+				        yield b
+				        a, b = b, a + b
+				        n = n + 1
+				    return 'done'
+				    
+		    generator和函数的执行流程不一样。函数是顺序执行，遇到return语句或者最后一行函数语句就返回。而变成generator的函数，在每次调用next()的时候执行，遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行。
+
+六、函数式编程
+	1、高阶函数：
+	
+		1)变量可以指向函数
+			f = abs #内置的绝对值函数
+			f(-10) #10
+
+		2)函数名也是变量
+			对于abs()这个函数，完全可以把函数名abs看成变量，它指向一个可以计算绝对值的函数！
+			如果把abs指向其他对象，会有什么情况发生？
+			abs = 10
+			abs(10) # TypeError: 'int' object is not callable 报错
+			要恢复abs函数，请重启Python交互环境
+
+			注：由于abs函数实际上是定义在import builtins模块中的，所以要让修改abs变量的指向在其它模块也生效，要用import builtins; builtins.abs = 10。
+		
+		3)传入函数
+			既然变量可以指向函数，函数的参数能接收变量，那么一个函数就可以接收另一个函数作为参数，这种函数就称之为高阶函数。
+			一个最简单的高阶函数：eg.
+				def add(x, y, f):
+				    return f(x) + f(y)
+			    add(-5, 6, abs)  #11
+
+		    把函数作为参数传入，这样的函数称为高阶函数，函数式编程就是指这种高度抽象的编程范式
+    
+    2、map/reduce
+
+    	1)map()函数接收两个参数，一个是函数，一个是Iterable(迭代器),map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回
+    	  eg.
+
+    	  	def f(x):
+    	  	    return x*x
+
+	  	    r = map(f, [1,2,3,4,5,6,7])
+	  	    list = list(r) #[1, 4, 9, 16, 25, 36, 49]
+
+	  	    注：Iterator是惰性序列，因此通过list()函数让它把整个序列都计算出来并返回一个list
+
+	  	    map()作为高阶函数，事实上它把运算规则抽象了，不但可以计算简单的，也可以计算很复杂的函数。
+
+	  	    list(map(str, [1,2,3,4,5])) #['1','2','3','4','5']  把list所有的数字转换成字符串，一行代码即可实现
+
+  	    2)reduce()函数接收两个参数，一个函数，一个序列，reduce把函数作用到序列上，并把结果继续和序列的下一个元素做累积计算
+  	      eg.
+
+  	       reduce(f, [x1,x2,x3,x4]) => f(f(f(x1,x2),x3),x4)
+
+  	       序列求和利用reduce即可轻松实现：
+  	       def fn(x,y):
+  	           return x+y
+           reduce(fn, [1,2,3,4,5,6]) == sum([1,2,3,4,5,6])
+    
+    3、filter：
+    	用于过滤序列
+    	把传入的函数依次作用于每个元素，然后根据返回值是True还是False决定保留还是丢弃该元素
+    	eg.
+
+    	def is_odd(s):
+    	    return s%2==1
+	    list(filter(is_odd, [1,2,3,4,5,6,7,8,9])) #[1, 3, 5, 7, 9]
+    
+    4、sorted:
+      	1)是python内置的一个高阶函数
+	  		eg. 对list进行排序
+	      	sorted([36, 5, -12, 9, -21]) #[-21, -12, 5, 9, 36]
+
+	      	eg. 接收一个key参数，实现自定义排序
+	      	sorted([36, 5, -12, 9, -21], key=abs)  #[5, 9, -12, -21, 36]
+
+	      	key指定的函数将作用于list的每一个元素上，并根据key函数返回的结果进行排序
+
+	      	eg. 忽略大小写排序
+	      	sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower)  #['about', 'bob', 'Credit', 'Zoo']
+
+      	2)反向排序
+      		eg. 添加第三个参数 reverse=True
+
+      		sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower, reverse=True)  #['Zoo', 'Credit', 'bob', 'about']
+	
+	5、返回函数：
+		1）把函数作为结果值返回。
+			如果不需要立即求和，而是在后面的代码中去调用执行，可以不返回求和的结果，而是返回一个求和的函数：
+			eg.
+				def sum(*args):
+					ax = 0
+					for n in args:
+						ax = ax+n
+					return ax
+				def lazy_sum(*args):
+					return sum(*args)
+
+		2）闭包
+			返回闭包时牢记一点：返回函数不要引用任何循环变量，或者后续会发生变化的变量。
+			def count():
+				f = lambda j : lambda j : j*j
+			    fs = []
+			    for i in range(1, 4):
+			        fs.append(f(i)) # f(i)立刻被执行，因此i的当前值被传入f()
+			    return fs
+    
+    6、匿名函数：(lambda)
+    	关键字声明：lambda
+    	def f(x):
+    	    return x*x
+	    等于==  
+	    lambda x : x*x
+
+	    匿名函数也是一个函数对象，也可以把匿名函数赋值给一个变量，再利用变量来调用该函数
+	    f = lambda x : x*x
+	    f(2) == 4
+    
+    7、装饰器：(Decorator)
+    	要增强now()函数的功能，但又不希望修改now()函数的定义，这种在代码运行期间动态增加功能的方式，称之为“装饰器”（Decorator）。
+    	Python的@语法，把decorator置于函数的定义处
+    	eg.
+    		def log(func):
+    			def wrapper(*args, **kw):
+    				print('call %s():'%func.__name__)
+    				return func(*args,**kw)
+				return wrapper
+
+			调用log时，使用@定义
+			@log
+			def now():
+				pass
+			调用now()函数，不仅会运行now()函数本身，还会在运行now()函数前打印一行日志：call now():
+			把@log放到now()函数的定义处，相当于执行了语句：now = log(now)
+			每个函数都有他的__name__属性：未引用log之前，now.__name__ = now
+			引用之后：now__name__ = wrapper
+
+			可以用python内置的functools.wraps
+			import functools
+
+			def log(func):
+			    @functools.wraps(func)
+			    def wrapper(*args, **kw):
+			        print('call %s():' % func.__name__)
+			        return func(*args, **kw)
+			    return wrapper
+	
+	8、偏函数：(Partial function)
+		functools模块提供了很多有用的功能，其中一个就是偏函数（Partial function）
+		int函数转换：默认转换成10进制
+		int('1234'): #1234
+
+		int()有额外的base参数，做n进制转换
+		int('12345', base=8): #5349  8进制转换
+		int('12345', base=16): #74565  16进制转换
+		假设要转换大量的二进制，可以create一个int2()函数，def int2(x, base=2): return int(x, base)
+
+		functools.partial就是帮助我们创建一个偏函数的，不需要我们自己定义int2()，可以直接使用下面的代码创建一个新的函数int2：
+		上面的int2方法可以写成： functools.partial(int, base=2)
+		int2('1000000') #64
+
+		简单总结functools.partial的作用就是，把一个函数的某些参数给固定住（也就是设置默认值），返回一个新的函数，调用这个新函数会更简单
+		注意到上面的新的int2函数，仅仅是把base参数重新设定默认值为2，但也可以在函数调用时传入其他值：
+		int2('1000000', base=10) #1000000
+
+		创建偏函数时，实际上可以接收函数对象、*args和**kw这3个参数:
+		1）int2=functools.partial(int, base=2)
+		   ==> kw = {'base': 2} int('1010101', **kw)
+
+	    2) max2=functools.partial(max, 10)
+	       ==> args = (10)  max(1,2,34,10)  #10 最大值
+
+       当函数的参数个数太多，需要简化时，使用functools.partial创建一个新的函数，固定原函数的部分参数，从而在调用时更简单
+
+       
