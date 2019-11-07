@@ -1,0 +1,492 @@
+
+六、模块
+	为了后期维护，把很多函数分组，分别放到不同的文件里，在python里面，一个.py结尾的文件就是一个Module
+	好处：
+		1）大大提高了代码的可维护性
+		2）可以被其他地方引用
+		3）可以避免函数名和变量名冲突
+
+	注意：尽量不要与内置函数名字冲突
+
+	为了避免模块名相同，python引入了按目录来组织模块的方法：包（Package）
+
+	创建自己的模块时，要注意：
+
+	模块名要遵循Python变量命名规范，不要使用中文、特殊字符；
+	模块名不要和系统模块名冲突，最好先查看系统是否已存在该模块，检查方法是在Python交互环境执行import abc，若成功则说明系统存在此模块。
+
+	倒入模块时：
+	1）from 文件名
+		eg:
+		 >>>from fibo
+		 >>>fibo.fib()  # 调用fibo文件内的fib方法
+
+ 	2）from 文件名 import 方法名1,方法名2...
+	 	eg:
+	 	 >>>from fibo import fib, fib1, fib2
+	 	 >>>fib1()  # 直接调用该方法
+
+	3）from 文件名 import *
+		意思是倒入文件内所有的方法（除以_开头的），但是这个功能大多时候不用，因为会导致引入很多不必要的方法名，且有可能覆盖一些你已经定义过的东西
+
+	4）from fibo as fib
+		将模块名重新绑定新的名称
+		eg:
+		 >>>fib.fib()
+
+	5）from fibo import fib as f
+		将倒入的方法名重新绑定新的名称
+		eg:
+		 >>>f()
+
+	6）以脚本的形式执行模块
+		语法：python xxx.py <arguments>
+		前提是需要在模块中添加一段脚本：
+		if __name__ == "__main__":
+		    import sys
+		    fib(int(sys.argv[1]))
+	    >>>$ python fibo.py 1000
+	    # 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+
+    7）包
+    	包的用户可以从包中导入单个模块：
+		eg:
+		 >>>import sound.effects.echo as fibo  # 导入sound/effects/echo.py 模块
+		 >>>fibo.fib()
+
+七、面向对象编程
+	1、类和实例
+		1）定义一个Student类：object是不确定继承哪个类时书写，因为所有的类最终都会继承object
+			class Student(object):
+				pass
+			创建一个bar实例：
+			bar = Student()
+			可以任意添加属性或方法
+
+			类可以起到模板的作用，因此，可以在创建实例的时候，把一些我们认为必须绑定的属性强制填写进去。通过定义一个特殊的__init__方法。
+			class Student(object):
+			    def __init__(self, name, score):  #__init__方法的第一个参数永远是self，表示创建的实例本身
+			        self.name = name    
+			        self.score = score
+		        #在__init__方法内部，就可以把各种属性绑定到self，因为self就指向创建的实例本身
+
+		        #有了__init__方法，在创建实例的时候，就不能传入空的参数了，必须传入与__init__方法匹配的参数，但self不需要传，Python解释器自己会把实例变量传进去
+		        bart = Student('Bart Simpson', 59)
+		        bart.name >> 'Bart Simpson'
+		        bart.score >> 59
+        2）数据封装
+        	在Student类的内部定义访问数据的函数，把“数据”给封装起来，封装数据的函数是和Student类本身是关联起来的，我们称之为类的方法。
+        	class Student(object):
+
+			    def __init__(self, name, score):
+			        self.name = name
+			        self.score = score
+
+			    def print_score(self):  #要定义一个方法，除了第一个参数是self外，其他和普通函数一样
+			        print('%s: %s' % (self.name, self.score))
+
+	        #实例化调用一个方法，只需要在实例变量上直接调用，除了self不用传递，其他参数正常传
+	        bart.print_score() >> Bart Simpson: 59
+
+	        封装数据的好处：数据和逻辑被“封装”起来了，调用很容易，但却不用知道内部实现的细节；可以增加很多方法
+        3) 实例化
+        	类只是一个模板，实例是一个个具体的对象，各个对象拥有的数据相互独立互不影响；
+        	方法就是与实例绑定的函数，和普通函数不同，方法可以直接访问实例的数据；
+
+	2、访问限制
+		在Python中，实例的变量名如果以__开头，就变成了一个私有变量（private），只有内部可以访问，外部不能访问
+		class Student(object):
+
+		    def __init__(self, name, score):
+		        self.__name = name
+		        self.__score = score
+
+		    def print_score(self):
+		        print('%s: %s' % (self.__name, self.__score))
+
+        >>> bart = Student('Bart Simpson', 59)
+        >>> bart.__name
+        AttributeError: 'Student' object has no attribute '__name'
+
+        这样就确保了外部代码不能随意修改对象内部的状态，这样通过访问限制的保护，代码更加健壮。
+
+        但是如果外部代码要获取score怎么办？可以给Student类增加get_score这样的方法：
+
+		    def get_score(self):
+		    	return self.__score
+
+    	如果又要允许外部代码修改score怎么办？可以再给Student类增加set_score方法：
+    		def set_score(self, score):
+        		self.__score = score
+
+		set_xxx方法的好处是：在方法中，可以对参数做检查，避免传入无效的参数
+			def set_score(self, score):
+		        if 0 <= score <= 100:
+		            self.__score = score
+		        else:
+		            raise ValueError('bad score')
+
+        !!! 在Python中，变量名类似__xxx__的，也就是以双下划线开头，并且以双下划线结尾的，是特殊变量，特殊变量是可以直接访问的，不是private变量。所以不能用这种__xx__命名变量
+
+    3、继承和多态
+    	新的class类可以继承已有的class，new class就叫做子类，father class就叫做基类，父类或者超类。
+    	eg:  class Animal():
+    	         def run(self):
+    	         	print('Animal is running...')
+         	class Dog(Animal):
+         		pass
+     		class Cat(Animal):
+     			pass
+		Animal是基类，Dog和Cat都是子类，他们继承基类的方法和属性
+
+		继承的好处： 1）是子类获得了父类的全部功能
+					2）子类可以自定义方法和属性，如果存在子类父类重复方法或者属性的情况下，子类总是覆盖基类，这叫多态
+
+		>>> c = Dog()
+		>>> isinstance(c, Dog)  # True
+		>>> isinstance(c, Animal)  # True
+
+		看来c不仅仅是Dog，c还是Animal！
+		在继承关系中，如果一个实例的数据类型是某个子类，那它的数据类型也可以被看做是父类,反之则不行！
+
+		eg:	  def run_twice(anything):
+		          anything.run()
+
+      	>>> run_twice(Animal())	# Animal is running...
+      	>>> run_twice(Dog())	# Animal is running...
+      	>> run_twice(Cat())		# Animal is running...
+
+      	新建一个class Pig(Animal):
+      	            print('Pig is eating...')
+
+        >>> run_twice(Pig())	# Pig is eating...
+
+        以上举例说明，新增一个Animal的子类，不必对run_twice()做任何修改，实际上，任何依赖Animal作为参数的函数或者方法都可以不加修改地正常运行，原因就在于多态。
+
+        静态语言 vs 动态语言：
+        对于静态语言（例如Java）来说，如果需要传入Animal类型，则传入的对象必须是Animal类型或者它的子类，否则，将无法调用run()方法。
+		对于Python这样的动态语言来说，则不一定需要传入Animal类型。我们只需要保证传入的对象有一个run()方法就可以了。
+
+	4、获取对象信息
+		1. type()
+			基本类型判断、变量指向函数、类
+			type()函数返回的是Class类型
+
+		2. types模块
+			函数类型判断
+			import types
+			def fn():
+			    pass
+			>>> type(fn)==types.FunctionType						# True
+			>>> type(abs)==types.BuiltinFunctionType			    # True
+			>>> type(lambda x: x)==types.LambdaType	                # True
+			>>> type((x for x in range(10)))==types.GeneratorType	# True
+
+		3. isinstance()
+			class类型判断、type()方法可判断的基本类型判断
+			isinstance((1,2,3), (list, tuple))  # True  判断（1,2,3）是否是list或者tuple
+
+		总是优先使用isinstance()判断类型，可以将指定类型及其子类“一网打尽”。
+
+		4. dir()
+			获得一个对象的所有属性和方法,返回一个包含字符串的list。
+			
+			>>> dir(abs)
+			['__call__', '__class__', '__delattr__', '__dir__', '__doc__', '__eq__', ...]
+
+			类似__xxx__的属性和方法在Python中都是有特殊用途的，比如__len__方法返回长度,在Python中，如果你调用len()函数试图获取一个对象的长度，实际上，在len()函数内部，它自动去调用该对象的__len__()方法。
+			>>> len('ABC')	    # 3
+			>>> 'ABC'.__len__()	# 3
+
+			除此之外，利用getattr()、setattr()、hasattr()，我们可以直接操作一个对象的状态：
+			eg.
+			class Myobject(object):
+				def __init__(self):
+					self.x = 9
+				def power(self):
+					return self.x * self.x
+			>>> obj = Myobject()
+			>>> hasattr(obj, 'x')      # 有属性'x'吗？ True
+			>>> obj.x 			       # 9
+			>>> hasattr(obj, 'y')      # 有属性'y'吗？ False
+			>>> setattr(obj, 'y', 19)  # 设置一个属性'y'
+			>>> hasattr(obj, 'y')      # 有属性'y'吗？ True
+			>>> getattr(obj, 'y')      # 获取属性'y'  19
+			>>> obj.y 				   # 获取属性'y'  19
+			>>> hasattr(obj, 'power')  # 有属性'power'吗？  True
+			>>> getattr(obj, 'power')  # 获取属性'power'	<bound method MyObject.power of <__main__.MyObject object at 0x10077a6a0>>
+			>>> fn = getattr(obj, 'power') # 获取属性'power'并赋值到变量fn
+			>>> fn # fn指向obj.power   # <bound method MyObject.power of <__main__.MyObject object at 0x10077a6a0>>
+			>>> fn()                   # 调用fn()与调用obj.power()是一样的  81
+
+
+			如果试图获取不存在的属性，会抛出AttributeError的错误，可以传入一个default参数，如果属性不存在，就返回默认值：
+			>>> getattr(obj, 'z', 404) # 获取属性'z'，如果不存在，返回默认值404	# 404
+
+	5、实例属性和类属性
+		由于Python是动态语言，根据类创建的实例可以任意绑定属性。
+		类本身的属性叫做类属性，实例化后新增的属性叫做实例属性。如果实例属性名称和类名称相同了，实例属性会覆盖类属性，当删除实例属性后，调用的是类属性。
+	
+八、面向对象高级编程
+	1、使用__slots__
+		给类的所有实例添加方法，只能在类中定义，每个实例单独绑定的方法只作用于改实例对象。
+		使用__slots__可以限制实例的属性：
+		eg.
+			class Students(object):
+				__slots__ = ('name', 'age')
+			>>>s = Students()
+			>>>s.name='candy'
+			>>>s.age=25
+			>>>s.score=100
+			报错：AttributeError: 'Students' object has no attribute 'score'
+		__slots__定义的属性仅对当前类实例起作用，对继承的子类是不起作用的
+		eg:
+			class GraduateStudent(Students):
+				pass
+			>>>g = GraduateStudent()
+			>>>g.score = 100
+			不会报错
+		在子类中也定义__slots__，定义的属性就是自身的__slots__加上父类的__slots__
+
+	2、使用@property
+		既能检查参数，又可以用类似属性这样简单的方式来访问类的变量。
+		Python内置的@property装饰器就是负责把一个方法变成属性调用。
+		class Student(object):
+			@property
+			def score(self):
+				return self._score
+			@score.setter
+			def score(self,value):
+				if not isinstance(value,int):
+					raise ValueError('score must be an integer!')
+				if value < 0 or value > 100:
+					raise ValueError('score must between 0 ~ 100!')
+				self._score = value
+		
+	3、多重继承
+		通过多重继承，一个子类就可以同时获得多个父类的所有功能。
+		eg:
+			class Dog(Mammal, Runnable):
+    			pass
+		Dog对象可以同时拥有Mammal和Runnable两个父类的所有功能！
+
+		1）MixIn的使用：
+		通常给一个类绑定多个父类的目的是，为了让子类拥有更多的功能，而复杂的继承关系看起来并不是很友好，所有出现了MixIn。
+		MixIn的目的就是给一个类增加多个功能。
+
+		我们优先考虑通过多重继承来组合多个MixIn的功能，而不是设计多层次的复杂的继承关系。
+		这样一来，我们不需要复杂而庞大的继承链，只要选择组合不同的类的功能，就可以快速构造出所需的子类
+
+	4、定制类
+		看到类似__slots__这种形如__xxx__的变量或者函数名就要注意，这些在Python中是有特殊用途的。
+		class Student(object):
+			def __init__(self):
+				self.name = name
+		>>>print(Student('Michael'))  # <__main__.Student object at 0x109afb190>
+
+		这样打印出来的结果不是很清晰明了，一般人看不懂
+		利用__str__()方法返回一个字符串
+		class Student(object):
+			def __init__(self):
+				self.name = name
+			def __str__(self):
+				return 'Student object (name: %s)' % self.name
+		>>>print(Student('Michael'))  # Student object (name: Michael)
+
+		实例化Student对象时，打印出来的还是不好看，因为调的是__repr__()方法。__repr__()是为调试服务的。
+		我们可以在class内部再定一个__repr__()方法，__repr__ = __str__
+		
+		__iter__:一个类想被用于for ... in循环，类似list或tuple那样，就必须实现一个__iter__()方法，该方法返回一个迭代对象
+			class Fib(object):
+			    def __init__(self):
+			        self.a, self.b = 0, 1 # 初始化两个计数器a，b
+
+			    def __iter__(self):
+			        return self # 实例本身就是迭代对象，故返回自己
+
+			    def __next__(self):
+			        self.a, self.b = self.b, self.a + self.b # 计算下一个值
+			        if self.a > 100000: # 退出循环的条件
+			            raise StopIteration()
+			        return self.a # 返回下一个值
+
+		__getitem__:像list那样按照下标取出元素，需要实现__getitem__()方法
+			class Fib(object):
+				def __getitem__(self, n):
+				    a, b = 1, 1
+				    for x in range(n):
+				        a, b = b, a + b
+				    return a
+
+	    __getatt__: 方法，动态返回一个属性
+		    class Student(object):
+			    def __init__(self):
+			        self.name = 'Michael'
+
+			    def __getattr__(self, attr):
+			        if attr=='score':
+			            return 99
+        __call__: 一个对象实例可以有自己的属性和方法,并且直接在实例本身上调用
+        
+        通过callable()函数，我们就可以判断一个对象是否是“可调用”对象
+        eg:
+        	 >>>callable(Student()) # True
+        	 >>>callable(max)  # True
+        	 >>>callable(None)  # False
+        	 ...
+	    完整的可定制化的方法参考：python官方文档：https://docs.python.org/3/reference/datamodel.html#special-method-names
+
+	5、枚举类
+		枚举类型定义一个class类型，然后，每个常量都是class的一个唯一实例
+		from enum import Enum
+		Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+		然后就可以通过Month.Jan来引用一个变量，也可以利用for循环来枚举它的所有成员：
+		>>>for name, member in Month.__members__.items():
+		...    print(name, '=>', member, ',', member.value)  # value属性则是自动赋给成员的int常量，默认从1开始计数
+		...
+		Jan => Month.Jan , 1
+		Feb => Month.Feb , 2
+		Mar => Month.Mar , 3
+		...
+
+		@unique装饰器可以帮助我们检查保证没有重复值。
+		from enum import Enum, unique
+		@unique
+		class Weekday(Enum):
+		    Sun = 0 # Sun的value被设定为0
+		    Mon = 1
+		    Tue = 2
+		    ...
+
+    6、元类
+    	动态语言和静态语言最大的不同就是函数和类的定义，不是编译时定义的，而是运行时动态创建的。
+    	要创建一个class对象，type()函数依次传入3个参数：
+    	1）class的名称；
+		2）继承的父类集合，注意Python支持多重继承，如果只有一个父类，别忘了tuple的单元素写法；
+		3）class的方法名称与函数绑定，这里我们把函数fn绑定到方法名hello上。
+
+		要控制类的创建行为，还可以使用metaclass：直译为元类
+		eg:
+			class ListMetaclass(type): # metaclass是类的模板，所以必须从`type`类型派生
+				def __new__(cls, name, bases, attrs):
+				 	attrs['add'] = lambda self, value: self.append(value)
+				 	return type.__new__(cls, name, bases, attrs)
+
+		 	class MyList(list, metaclass=ListMetaclass):
+    			pass
+
+九、错误、调试和测试
+	高级语言通常都内置了一套try...except...finally,Python同样
+	try:
+		print('try...')
+		 r = 10 / 0
+    	print('result:', r)
+	except ZeroDivisionError as e:
+		print('except:', e)
+	finally:
+    	print('finally...')
+	print('END')
+
+	所有的错误都是从BaseException类派生来的，常见的错误类型和继承关系如下：https://docs.python.org/3/library/exceptions.html#exception-hierarchy
+
+	调试：
+		1）打印print
+		2）断言assert
+		3）日志logging
+		4）调试器pdb
+		5）设置断点、单步执行, 安装IDE插件
+	异常：
+		raise语句允许程序员强制指定发生的异常：
+		eg:
+		 >>>raise NameError('HiThere')
+		 Traceback (most recent call last):
+		 File "<stdin>", line 1, in <module>
+		 NameError: HiThere
+		
+十、IO编程
+	os模块的某些函数是跟操作系统相关的。
+	1、操作文件和目录：
+		eg:
+		 >>>import os
+		 >>>os.uname
+		 uname()函数在Windows上不提供,只有Linux、Unix或Mac OS X才具有
+
+	 	1）获取环境变量
+		 	os.environ
+	 	2）获取某个环境变量
+	 		os.environ.get('key')
+
+		3）获取目录下的所有指定格式的文件
+			eg:获取当前目录下所有py结尾的文件。[x for x in os.listdir('.') if os.path.isfile(x) and os.path.splitext(x)[1] == '.py']
+	
+	2、序列化：
+		把变量从内存中变成可存储或传输的过程称之为序列化
+		内置pickle模块来实现序列化
+		pickle.dumps()方法把任意对象序列化成一个bytes
+		eg:
+		 >>>d=dict(name='Bob', age=20, score=86)
+		 >>>d=dict(name='Bob', age=20, score=86) # b'\x80\x03}q\x00(X\x04\x00\x00\x00nameq\x01X\x03\x00\x00\x00Bobq\x02X\x03\x00\x00\x00ageq\x03K\x14X\x05\x00\x00\x00scoreq\x04KVu.'
+		 
+		 这时可以将序列化后的bytes写入文件，也可直接用pickle.dump()方法：
+		 >>>f=open('D:\\test.txt', 'wb')
+		 >>>pickle.dump(d, f)
+		 >>>f.close()
+
+		 这时去查看test.txt文件，是一群乱码的bytes数据，这时可以用pickle.loads()方法反序列化出对象，也可以直接用pickle.load()来直接反序列化出对象。
+		 >>>f = open('D:\\dump.txt', 'rb')
+		 >>>d = pickle.load(f)
+		 >>>f.close()
+		 >>> d
+		 {'age': 20, 'score': 88, 'name': 'Bob'}
+
+ 	3、JSON
+	 	如果我们要在不同的编程语言之间传递对象，就必须把对象序列化为标准格式，但更好的方法是序列化为JSON，JSON表示出来就是一个字符串，可以被所有语言读取，也可以方便地存储到磁盘或者通过网络传输。JSON不仅是标准格式，并且比XML更快，而且可以直接在Web页面中读取，非常方便。
+
+	 	1）把Python对象变成一个JSON: json.dumps()或者json.dump(dict, file)
+	 		>>> import json
+			>>> d = dict(name='Bob', age=20, score=88)
+			>>> json.dumps(d)
+			'{"age": 20, "score": 88, "name": "Bob"}'	
+		dumps()方法返回一个str，内容就是标准的JSON。类似的，dump()方法可以直接把JSON写入一个file-like Object
+
+		2）把JSON对象反序列化成python对象：json.loads()或者json.load(dict, file)
+			>>> json_str = '{"age": 20, "score": 88, "name": "Bob"}'
+			>>> json.loads(json_str)
+			{'age': 20, 'score': 88, 'name': 'Bob'}
+
+	4、JSON进阶
+		定制JSON序列化
+		可选参数default就是把任意一个对象变成一个可序列为JSON的对象，需要为一些class专门写一个转换函数，再把函数传进去即可。
+		eg:
+			def student2dict(std):
+				return {
+					'name': std.name,
+					'age': std.age,
+					'score': std.score
+				}
+		这样，Student实例首先被student2dict()函数转换成dict，然后再被顺利序列化为JSON:
+		
+		>>> print(json.dumps(s, default=student2dict))
+		{"age": 20, "name": "Bob", "score": 88}
+
+	5、预定义的清理操作
+		eg:
+		 >>>for line in open("myfile.txt"):
+    	 ...    print(line, end="")
+
+	 	# 这个代码的问题在于，它在这部分代码执行完后，会使文件在一段不确定的时间内处于打开状态，对于较大的应用程序来说可能是个问题。
+	 	# with 语句允许像文件这样的对象能够以一种确保它们得到及时和正确的清理的方式使用。
+	 	
+	 	 >>>with open('xxx.txt') as f:
+	 	 ...    for line in f:
+	 	 ...        print(line, end = "")
+
+	 	# 执行完语句后，即使在处理行时遇到问题，文件 f 也始终会被关闭。
+
+十一、正则表达式
+	参考网址：https://www.liaoxuefeng.com/wiki/1016959663602400/1017639890281664
+
+十二、标准库
+	1、模板
+		占位符${}
+
