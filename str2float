@@ -1,0 +1,29 @@
+from functools import reduce
+CHAR_TO_FLOAT = {
+    '0': 0,
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9,
+    '.': -1
+}
+# nonlocal关键字用来在函数或其他作用域中使用外层(非全局)变量。
+def str2float(s):
+	nums = map(lambda x : CHAR_TO_FLOAT(x), s)
+	point = 0
+	def to_float(f, n):
+		nonlocal point
+		if n == -1:
+			point = 1
+			return f
+		if point == 0:
+			return f * 10 + n
+		else:
+			point = point * 10
+			return f + n / point
+	return reduce(to_float, nums, 0.0)
