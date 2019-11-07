@@ -1,0 +1,37 @@
+def log(func):
+	def wrapper(*args, **kw): #可变参数和关键字参数
+		print('call %s():' % func.__name__)
+		return func(*args, **kw)
+	return wrapper
+
+def now():
+	print('2019-07-01')
+
+#执行代码
+@log
+now()
+
+# call now()
+# 2019-07-01
+  
+# logger
+import functools
+
+def logger(*text):
+	def decorator(func):
+		@functools.wraps(func)
+		def wrapper(*args, **kw):
+			print(func.__name__, 'begin', *text)
+			func(*args, **kw)
+			print(func.__name__, 'end', *text)
+
+		return wrapper
+	return decorator
+
+
+@logger()
+def printLn():
+	print('不加参数')
+
+@logger('executed')
+	print('加参数')
